@@ -48,6 +48,8 @@ github.com/Wondertan/go-ipfs-recovery v0.0.0-20200807050156-39e0362e6694 h1:edq5
 github.com/Wondertan/go-ipfs-recovery v0.0.0-20200807050156-39e0362e6694/go.mod h1:qcsA68KQleONzSdGxV/8pmqZXsEoiDDxLKlAD6Guwxw=
 github.com/Wondertan/go-ipfs-recovery v0.0.0-20200807052213-8607000b59eb h1:g1Orm9Jk37Mboz7LU3J/4qmGfaOxa5r2hxmjbqYT+8g=
 github.com/Wondertan/go-ipfs-recovery v0.0.0-20200807052213-8607000b59eb/go.mod h1:qcsA68KQleONzSdGxV/8pmqZXsEoiDDxLKlAD6Guwxw=
+github.com/Wondertan/go-ipfs-recovery v0.0.0-20200807065521-04a2df6980db h1:yHClz17vhrXPt45g/jcFeHKvQyeBin8ZifgnymlYNcY=
+github.com/Wondertan/go-ipfs-recovery v0.0.0-20200807065521-04a2df6980db/go.mod h1:qcsA68KQleONzSdGxV/8pmqZXsEoiDDxLKlAD6Guwxw=
 github.com/aead/siphash v1.0.1/go.mod h1:Nywa3cDsYNNK3gaciGTWPwHt0wlpNV15vwmswBAUSII=
 github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
 github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=

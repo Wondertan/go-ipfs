@@ -67,7 +67,7 @@ var encodeCmd = &cmds.Command{
 	},
 	Encoders: cmds.EncoderMap{
 		cmds.Text: cmds.MakeTypedEncoder(func(req *cmds.Request, w io.Writer, resp *EncodeResp) error {
-			_, err := fmt.Fprintf(w, "Encoded: %s", resp.Cid.String())
+			_, err := fmt.Fprintf(w, "Encoded: %s\n", resp.Cid.String())
 			return err
 		}),
 	},
