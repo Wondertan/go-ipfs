@@ -43,6 +43,8 @@ var VersionCmd = &cmds.Command{
 		cmds.BoolOption(versionRepoOptionName, "Show repo version."),
 		cmds.BoolOption(versionAllOptionName, "Show all version information"),
 	},
+	// must be permitted to run before init
+	Extra: CreateCmdExtras(SetDoesNotUseRepo(true), SetDoesNotUseConfigAsInput(true)),
 	Run: func(req *cmds.Request, res cmds.ResponseEmitter, env cmds.Environment) error {
 		return cmds.EmitOnce(res, &VersionOutput{
 			Version: version.CurrentVersionNumber,
@@ -54,19 +56,23 @@ var VersionCmd = &cmds.Command{
 	},
 	Encoders: cmds.EncoderMap{
 		cmds.Text: cmds.MakeTypedEncoder(func(req *cmds.Request, w io.Writer, version *VersionOutput) error {
-			commit, _ := req.Options[versionCommitOptionName].(bool)
-			commitTxt := ""
-			if commit {
-				commitTxt = "-" + version.Commit
-			}
-
 			all, _ := req.Options[versionAllOptionName].(bool)
 			if all {
-				out := fmt.Sprintf("go-ipfs version: %s-%s\n"+
+				ver := version.Version
+				if version.Commit != "" {
+					ver += "-" + version.Commit
+				}
+				out := fmt.Sprintf("go-ipfs version: %s\n"+
 					"Repo version: %s\nSystem version: %s\nGolang version: %s\n",
-					version.Version, version.Commit, version.Repo, version.System, version.Golang)
+					ver, version.Repo, version.System, version.Golang)
 				fmt.Fprint(w, out)
 				return nil
+			}
+
+			commit, _ := req.Options[versionCommitOptionName].(bool)
+			commitTxt := ""
+			if commit && version.Commit != "" {
+				commitTxt = "-" + version.Commit
 			}
 
 			repo, _ := req.Options[versionRepoOptionName].(bool)

@@ -7,15 +7,15 @@ import (
 	"io"
 	"strings"
 
-	core "github.com/ipfs/go-ipfs/core"
 	cmdenv "github.com/ipfs/go-ipfs/core/commands/cmdenv"
-	"github.com/ipfs/go-ipfs/namesys/resolve"
 
 	cid "github.com/ipfs/go-cid"
 	cidenc "github.com/ipfs/go-cidutil/cidenc"
 	cmds "github.com/ipfs/go-ipfs-cmds"
 	ipld "github.com/ipfs/go-ipld-format"
-	path "github.com/ipfs/go-path"
+	merkledag "github.com/ipfs/go-merkledag"
+	iface "github.com/ipfs/interface-go-ipfs-core"
+	path "github.com/ipfs/interface-go-ipfs-core/path"
 )
 
 var refsEncoderMap = cmds.EncoderMap{
@@ -75,7 +75,7 @@ NOTE: List all references recursively by using the flag '-r'.
 		}
 
 		ctx := req.Context
-		n, err := cmdenv.GetNode(env)
+		api, err := cmdenv.GetApi(env, req)
 		if err != nil {
 			return err
 		}
@@ -103,14 +103,15 @@ NOTE: List all references recursively by using the flag '-r'.
 			format = "<src> -> <dst>"
 		}
 
-		objs, err := objectsForPaths(ctx, n, req.Arguments)
+		// TODO: use session for resolving as well.
+		objs, err := objectsForPaths(ctx, api, req.Arguments)
 		if err != nil {
 			return err
 		}
 
 		rw := RefWriter{
 			res:      res,
-			DAG:      n.DAG,
+			DAG:      merkledag.NewSession(ctx, api.Dag()),
 			Ctx:      ctx,
 			Unique:   unique,
 			PrintFmt: format,
@@ -165,21 +166,16 @@ Displays the hashes of all local objects.
 	Type:     RefWrapper{},
 }
 
-func objectsForPaths(ctx context.Context, n *core.IpfsNode, paths []string) ([]ipld.Node, error) {
-	objects := make([]ipld.Node, len(paths))
+func objectsForPaths(ctx context.Context, n iface.CoreAPI, paths []string) ([]cid.Cid, error) {
+	roots := make([]cid.Cid, len(paths))
 	for i, sp := range paths {
-		p, err := path.ParsePath(sp)
+		o, err := n.ResolvePath(ctx, path.New(sp))
 		if err != nil {
 			return nil, err
 		}
-
-		o, err := resolve.Resolve(ctx, n.Namesys, n.Resolver, p)
-		if err != nil {
-			return nil, err
-		}
-		objects[i] = o
+		roots[i] = o.Cid()
 	}
-	return objects, nil
+	return roots, nil
 }
 
 type RefWrapper struct {
@@ -189,7 +185,7 @@ type RefWrapper struct {
 
 type RefWriter struct {
 	res cmds.ResponseEmitter
-	DAG ipld.DAGService
+	DAG ipld.NodeGetter
 	Ctx context.Context
 
 	Unique   bool
@@ -200,7 +196,11 @@ type RefWriter struct {
 }
 
 // WriteRefs writes refs of the given object to the underlying writer.
-func (rw *RefWriter) WriteRefs(n ipld.Node, enc cidenc.Encoder) (int, error) {
+func (rw *RefWriter) WriteRefs(c cid.Cid, enc cidenc.Encoder) (int, error) {
+	n, err := rw.DAG.Get(rw.Ctx, c)
+	if err != nil {
+		return 0, err
+	}
 	return rw.writeRefsRecursive(n, 0, enc)
 }
 

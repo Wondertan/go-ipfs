@@ -46,7 +46,7 @@ DATA STRUCTURE COMMANDS
 
 ADVANCED COMMANDS
   daemon        Start a long-running daemon process
-  mount         Mount an IPFS read-only mountpoint
+  mount         Mount an IPFS read-only mount point
   resolve       Resolve any type of name
   name          Publish and resolve IPNS names
   key           Create and list IPNS name keypairs
@@ -144,11 +144,12 @@ var rootSubcommands = map[string]*cmds.Command{
 	"swarm":     SwarmCmd,
 	"tar":       TarCmd,
 	"file":      unixfs.UnixFSCmd,
-	"update":    ExternalBinary(),
+	"update":    ExternalBinary("Please see https://git.io/fjylH for installation instructions."),
 	"urlstore":  urlStoreCmd,
 	"version":   VersionCmd,
 	"shutdown":  daemonShutdownCmd,
 	"cid":       CidCmd,
+	"recovery":  RecoveryCmd,
 }
 
 // RootRO is the readonly version of Root

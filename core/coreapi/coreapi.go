@@ -18,20 +18,16 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/ipfs/go-ipfs/core"
-	"github.com/ipfs/go-ipfs/core/node"
-	"github.com/ipfs/go-ipfs/namesys"
-	"github.com/ipfs/go-ipfs/pin"
-	"github.com/ipfs/go-ipfs/provider"
-	"github.com/ipfs/go-ipfs/repo"
-
+	recovery "github.com/Wondertan/go-ipfs-recovery"
+	"github.com/Wondertan/go-ipfs-recovery/reedsolomon"
 	bserv "github.com/ipfs/go-blockservice"
 	"github.com/ipfs/go-ipfs-blockstore"
 	"github.com/ipfs/go-ipfs-exchange-interface"
 	offlinexch "github.com/ipfs/go-ipfs-exchange-offline"
+	"github.com/ipfs/go-ipfs-pinner"
+	"github.com/ipfs/go-ipfs-provider"
 	offlineroute "github.com/ipfs/go-ipfs-routing/offline"
 	ipld "github.com/ipfs/go-ipld-format"
-	logging "github.com/ipfs/go-log"
 	dag "github.com/ipfs/go-merkledag"
 	coreiface "github.com/ipfs/interface-go-ipfs-core"
 	"github.com/ipfs/interface-go-ipfs-core/options"
@@ -42,9 +38,12 @@ import (
 	routing "github.com/libp2p/go-libp2p-core/routing"
 	pubsub "github.com/libp2p/go-libp2p-pubsub"
 	record "github.com/libp2p/go-libp2p-record"
-)
 
-var log = logging.Logger("core/coreapi")
+	"github.com/ipfs/go-ipfs/core"
+	"github.com/ipfs/go-ipfs/core/node"
+	"github.com/ipfs/go-ipfs/namesys"
+	"github.com/ipfs/go-ipfs/repo"
+)
 
 type CoreAPI struct {
 	nctx context.Context
@@ -229,6 +228,11 @@ func (api *CoreAPI) WithOptions(opts ...options.ApiOption) (coreiface.CoreAPI, e
 		subApi.dag = dag.NewDAGService(subApi.blocks)
 	}
 
+	// subApi.dag = &dag.ComboService{
+	// 	Read:  recovery.NewNodeGetter(subApi.dag, reedsolomon.NewRestorer(subApi.dag)), // TODO This should not be tight to concrete implementation
+	// 	Write: subApi.dag,
+	// }
+
 	return subApi, nil
 }
 
@@ -238,7 +242,7 @@ func (api *CoreAPI) getSession(ctx context.Context) *CoreAPI {
 
 	// TODO: We could also apply this to api.blocks, and compose into writable api,
 	// but this requires some changes in blockservice/merkledag
-	sesApi.dag = dag.NewReadOnlyDagService(dag.NewSession(ctx, api.dag))
+	sesApi.dag = dag.NewReadOnlyDagService(recovery.NewNodeGetter(dag.NewSession(ctx, api.dag), reedsolomon.NewRecoverer(api.dag)))
 
 	return &sesApi
 }
