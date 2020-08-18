@@ -19,7 +19,6 @@ import (
 	"fmt"
 
 	recovery "github.com/Wondertan/go-ipfs-recovery"
-	"github.com/Wondertan/go-ipfs-recovery/reedsolomon"
 	bserv "github.com/ipfs/go-blockservice"
 	"github.com/ipfs/go-ipfs-blockstore"
 	"github.com/ipfs/go-ipfs-exchange-interface"
@@ -56,8 +55,9 @@ type CoreAPI struct {
 	baseBlocks blockstore.Blockstore
 	pinning    pin.Pinner
 
-	blocks bserv.BlockService
-	dag    ipld.DAGService
+	blocks   bserv.BlockService
+	dag      ipld.DAGService
+	recovery recovery.Recoverer
 
 	peerstore       pstore.Peerstore
 	peerHost        p2phost.Host
@@ -167,8 +167,9 @@ func (api *CoreAPI) WithOptions(opts ...options.ApiOption) (coreiface.CoreAPI, e
 		baseBlocks: n.BaseBlocks,
 		pinning:    n.Pinning,
 
-		blocks: n.Blocks,
-		dag:    n.DAG,
+		blocks:   n.Blocks,
+		dag:      n.DAG,
+		recovery: n.Recovery,
 
 		peerstore:       n.Peerstore,
 		peerHost:        n.PeerHost,
@@ -228,11 +229,6 @@ func (api *CoreAPI) WithOptions(opts ...options.ApiOption) (coreiface.CoreAPI, e
 		subApi.dag = dag.NewDAGService(subApi.blocks)
 	}
 
-	// subApi.dag = &dag.ComboService{
-	// 	Read:  recovery.NewNodeGetter(subApi.dag, reedsolomon.NewRestorer(subApi.dag)), // TODO This should not be tight to concrete implementation
-	// 	Write: subApi.dag,
-	// }
-
 	return subApi, nil
 }
 
@@ -240,9 +236,11 @@ func (api *CoreAPI) WithOptions(opts ...options.ApiOption) (coreiface.CoreAPI, e
 func (api *CoreAPI) getSession(ctx context.Context) *CoreAPI {
 	sesApi := *api
 
+	ses := recovery.NewDagSession(ctx, api.recovery, api.exchange, api.blockstore)
+
 	// TODO: We could also apply this to api.blocks, and compose into writable api,
 	// but this requires some changes in blockservice/merkledag
-	sesApi.dag = dag.NewReadOnlyDagService(recovery.NewNodeGetter(dag.NewSession(ctx, api.dag), reedsolomon.NewRecoverer(api.dag)))
+	sesApi.dag = dag.NewReadOnlyDagService(ses)
 
 	return &sesApi
 }

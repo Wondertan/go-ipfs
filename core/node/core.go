@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	recovery "github.com/Wondertan/go-ipfs-recovery"
+	"github.com/Wondertan/go-ipfs-recovery/reedsolomon"
 	"github.com/ipfs/go-bitswap"
 	"github.com/ipfs/go-bitswap/network"
 	"github.com/ipfs/go-blockservice"
@@ -163,4 +165,8 @@ func Files(mctx helpers.MetricsCtx, lc fx.Lifecycle, repo repo.Repo, dag format.
 	})
 
 	return root, err
+}
+
+func Recovery(mctx helpers.MetricsCtx, lc fx.Lifecycle, dag format.DAGService) recovery.Recoverer {
+	return reedsolomon.NewRecoverer(helpers.LifecycleCtx(mctx, lc), dag, recovery.All) // TODO Implementation agnostic
 }

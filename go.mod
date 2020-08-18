@@ -3,7 +3,7 @@ module github.com/ipfs/go-ipfs
 require (
 	bazil.org/fuse v0.0.0-20200117225306-7b5117fecadc
 	github.com/AndreasBriese/bbloom v0.0.0-20190825152654-46b345b51c96 // indirect
-	github.com/Wondertan/go-ipfs-recovery v0.0.0-20200807065521-04a2df6980db
+	github.com/Wondertan/go-ipfs-recovery v0.0.0-20200818141237-bf94f18cd122
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/bren2010/proquint v0.0.0-20160323162903-38337c27106d
 	github.com/coreos/go-systemd/v22 v22.1.0
@@ -19,7 +19,7 @@ require (
 	github.com/ipfs/go-bitswap v0.2.19
 	github.com/ipfs/go-block-format v0.0.2
 	github.com/ipfs/go-blockservice v0.1.3
-	github.com/ipfs/go-cid v0.0.6
+	github.com/ipfs/go-cid v0.0.7
 	github.com/ipfs/go-cidutil v0.0.2
 	github.com/ipfs/go-datastore v0.4.4
 	github.com/ipfs/go-detect-race v0.0.1
@@ -27,14 +27,14 @@ require (
 	github.com/ipfs/go-ds-flatfs v0.4.4
 	github.com/ipfs/go-ds-leveldb v0.4.2
 	github.com/ipfs/go-ds-measure v0.1.0
-	github.com/ipfs/go-filestore v0.0.3
+	github.com/ipfs/go-filestore v1.0.0
 	github.com/ipfs/go-fs-lock v0.0.5
 	github.com/ipfs/go-graphsync v0.0.5
-	github.com/ipfs/go-ipfs-blockstore v0.1.4
+	github.com/ipfs/go-ipfs-blockstore v1.0.1
 	github.com/ipfs/go-ipfs-chunker v0.0.5
 	github.com/ipfs/go-ipfs-cmds v0.3.0
 	github.com/ipfs/go-ipfs-config v0.9.0
-	github.com/ipfs/go-ipfs-ds-help v0.1.1
+	github.com/ipfs/go-ipfs-ds-help v1.0.0
 	github.com/ipfs/go-ipfs-exchange-interface v0.0.1
 	github.com/ipfs/go-ipfs-exchange-offline v0.0.1
 	github.com/ipfs/go-ipfs-files v0.0.8
@@ -95,7 +95,7 @@ require (
 	github.com/multiformats/go-multiaddr-dns v0.2.0
 	github.com/multiformats/go-multiaddr-net v0.1.5
 	github.com/multiformats/go-multibase v0.0.3
-	github.com/multiformats/go-multihash v0.0.13
+	github.com/multiformats/go-multihash v0.0.14
 	github.com/opentracing/opentracing-go v1.1.0
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.6.0

@@ -13,6 +13,7 @@ import (
 	"context"
 	"io"
 
+	recovery "github.com/Wondertan/go-ipfs-recovery"
 	"github.com/ipfs/go-filestore"
 	"github.com/ipfs/go-ipfs-pinner"
 
@@ -81,6 +82,7 @@ type IpfsNode struct {
 	Discovery       discovery.Service         `optional:"true"`
 	FilesRoot       *mfs.Root
 	RecordValidator record.Validator
+	Recovery        recovery.Recoverer
 
 	// Online
 	PeerHost      p2phost.Host            `optional:"true"` // the network host (server+client)

@@ -110,10 +110,10 @@ func LibP2P(bcfg *BuildCfg, cfg *config.Config) fx.Option {
 	}
 
 	// If `cfg.Swarm.DisableRelay` is set and `Network.Relay` isn't, use the former.
-	enableRelay := cfg.Swarm.Transports.Network.Relay.WithDefault(!cfg.Swarm.DisableRelay) //nolint
+	enableRelay := cfg.Swarm.Transports.Network.Relay.WithDefault(!cfg.Swarm.DisableRelay) // nolint
 
 	// Warn about a deprecated option.
-	//nolint
+	// nolint
 	if cfg.Swarm.DisableRelay {
 		logger.Error("The `Swarm.DisableRelay' config field is deprecated.")
 		if enableRelay {
@@ -294,6 +294,7 @@ var Core = fx.Options(
 	fx.Provide(resolver.NewBasicResolver),
 	fx.Provide(Pinning),
 	fx.Provide(Files),
+	fx.Provide(Recovery),
 )
 
 func Networked(bcfg *BuildCfg, cfg *config.Config) fx.Option {
